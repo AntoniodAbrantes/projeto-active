@@ -1,0 +1,7 @@
+remote: error: Trace: 995f03ab4d3271c505e6d2b4647816fb845385edafe2aea6e2456c46f8f4bdd5        
+remote: error: See https://gh.io/lfs for more information.        
+remote: error: File public/Midia/hero-video.mp4 is 108.02 MB; this exceeds GitHub's file size limit of 100.00 MB        
+remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.        
+To https://github.com/AntoniodAbrantes/projeto-active.git
+ ! [remote rejected] main -> main (pre-receive hook declined)
+error: failed to push some refs to 'https://github.com/AntoniodAbrantes/projeto-active.git'

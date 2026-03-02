@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const differentials = [
   {
-    image: "/Midia/IMG_5510.mp4",
+    image: "/Midia/hero-video.mp4",
     title: "Comunidade Blindada",
     description: "Entre em um grupo focado em evoluir, com suporte mútuo e energia imparável.",
   },
@@ -12,7 +12,7 @@ const differentials = [
     description: "Premiação e reconhecimento para os alunos mais assíduos e disciplinados.",
   },
   {
-    image: "/Midia/treino-pneu.png",
+    image: "/Midia/treino-casal.jpg",
     title: "Desafios Diários",
     description: "Testamos seus limites todos os dias para forjar uma nova mentalidade.",
   },
