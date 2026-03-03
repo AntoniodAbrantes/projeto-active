@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Student } from "./types";
 import { Search, Filter } from "lucide-react";
 import { StudentRow } from "./StudentRow";
+import { StudentCard } from "./StudentCard";
 
 export function StudentsTable({ students, onEdit }: { students: Student[], onEdit: (student: Student) => void }) {
     const [searchTerm, setSearchTerm] = useState("");
@@ -47,8 +48,8 @@ export function StudentsTable({ students, onEdit }: { students: Student[], onEdi
                 </div>
             </div>
 
-            {/* Table Data */}
-            <div className="overflow-x-auto">
+            {/* Table Data (Desktop) */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left text-sm whitespace-nowrap">
                     <thead className="bg-black/40 text-muted-foreground font-semibold uppercase text-xs tracking-wider">
                         <tr>
@@ -74,6 +75,19 @@ export function StudentsTable({ students, onEdit }: { students: Student[], onEdi
                         )}
                     </tbody>
                 </table>
+            </div>
+
+            {/* Mobile Cards View */}
+            <div className="md:hidden flex flex-col gap-4 p-4">
+                {filteredStudents.length > 0 ? (
+                    filteredStudents.map((student) => (
+                        <StudentCard key={student.id} student={student} onEdit={() => onEdit(student)} />
+                    ))
+                ) : (
+                    <div className="py-12 text-center text-muted-foreground bg-black/20 rounded-xl border border-white/5">
+                        Nenhum aluno encontrado.
+                    </div>
+                )}
             </div>
         </div>
     );

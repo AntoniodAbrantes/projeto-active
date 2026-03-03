@@ -2,7 +2,7 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2 } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse } from "lucide-react";
 
 interface StudentRowProps {
     student: Student;
@@ -80,7 +80,24 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
                 </label>
             </td>
             <td className="px-6 py-4">
-                <p className="font-medium text-white group-hover:text-primary transition-colors">{student.nome || student.name || 'Sem nome'}</p>
+                <div className="flex flex-col gap-1">
+                    <p className="font-medium text-white group-hover:text-primary transition-colors text-base">{student.nome || student.name || 'Sem nome'}</p>
+
+                    {(student.objetivo || student.lesao) && (
+                        <div className="flex flex-col gap-1 text-xs mt-1">
+                            {student.objetivo && (
+                                <span className="flex items-center gap-1 text-muted-foreground bg-primary/10 px-2 py-0.5 rounded border border-primary/20 w-fit">
+                                    <Crosshair className="w-3 h-3 text-primary" /> {student.objetivo}
+                                </span>
+                            )}
+                            {student.lesao && student.lesao !== "Nenhuma" && student.lesao !== "Sem lesões" && (
+                                <span className="flex items-center gap-1 text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-400/20 w-fit">
+                                    <HeartPulse className="w-3 h-3 text-red-400" /> {student.lesao}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                </div>
             </td>
             <td className="px-6 py-4 text-muted-foreground space-y-1">
                 <div className="flex items-center gap-2">

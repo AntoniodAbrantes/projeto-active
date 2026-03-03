@@ -12,7 +12,7 @@ const transformations = [
     },
     {
         src: "/Midia/imagem2antesedepois.jpeg",
-        tag: "Transformação Completa em 25 Dias",
+        tag: "Transformação Completa em 35 Dias",
     },
 ];
 
@@ -57,20 +57,18 @@ const TransformationSection = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.5, delay: idx * 0.15 }}
-                            className="group relative rounded-2xl sm:rounded-3xl overflow-hidden aspect-[4/5] sm:aspect-[3/4] bg-white/[0.02] border border-white/5 backdrop-blur-sm"
+                            className="group relative rounded-2xl sm:rounded-3xl overflow-hidden bg-black/40 border border-white/5 flex flex-col"
                         >
                             {/* Asset Display */}
-                            <div className="absolute inset-0 w-full h-full">
-                                <img
-                                    src={item.src}
-                                    alt={`Inspiração de Transformação ${idx + 1}`}
-                                    loading="lazy"
-                                    className="w-full h-full object-cover sm:object-cover sm:object-center transition-transform duration-700 group-hover:scale-105 opacity-90"
-                                />
-                            </div>
+                            <img
+                                src={item.src}
+                                alt={`Inspiração de Transformação ${idx + 1}`}
+                                loading="lazy"
+                                className="w-full h-auto object-contain transition-transform duration-700 group-hover:scale-105 opacity-90"
+                            />
 
                             {/* Overlay Gradient (Bottom fade) */}
-                            <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+                            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none" />
 
                             {/* Tag / Description overlay */}
                             <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 flex flex-col items-center text-center">

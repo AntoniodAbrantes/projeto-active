@@ -10,5 +10,6 @@ export interface Student {
     amount?: number;
     instagram?: string;
     objetivo?: string;
+    lesao?: string;
     status?: string;
 }

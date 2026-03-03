@@ -87,7 +87,7 @@ const StatsSection = () => {
         <div className="grid grid-cols-3 gap-4 sm:gap-16">
           <StatCard end={60} prefix="+" label="Participantes" delay={0} />
           <StatCard end={102.6} decimals={1} suffix=" kg" label="Perdidos" delay={0.15} />
-          <StatCard end={30} label="Dias de Transformação" delay={0.3} />
+          <StatCard end={35} label="Dias de Transformação" delay={0.3} />
         </div>
       </div>
     </section>

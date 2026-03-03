@@ -11,6 +11,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import RegistrationForm from "@/components/RegistrationForm";
 import FAQSection from "@/components/FAQSection";
 import ActiveFooter from "@/components/ActiveFooter";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 
 const Index = () => {
   return (
@@ -28,6 +29,7 @@ const Index = () => {
       <FAQSection />
       <RegistrationForm />
       <ActiveFooter />
+      <StickyMobileCTA />
     </div>
   );
 };

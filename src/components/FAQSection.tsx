@@ -15,7 +15,7 @@ const faqs = [
   {
     question: "Quanto tempo dura o projeto?",
     answer:
-      "O projeto tem duração de 30 dias, com treinos diários, acompanhamento nutricional e suporte completo da comunidade.",
+      "O projeto tem duração de 35 dias, com treinos diários, acompanhamento nutricional e suporte completo da comunidade.",
   },
   {
     question: "Preciso ter experiência com treino?",
