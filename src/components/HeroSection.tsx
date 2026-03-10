@@ -194,6 +194,9 @@ const HeroSection = () => {
           </div>
         )}
 
+        {/* Premium Dark Overlay */}
+        <div className="absolute inset-0 bg-black/25 pointer-events-none" />
+
         {/* Loading state (desktop only) */}
         {!imagesLoaded && (
           <div className="absolute inset-0 bg-background flex flex-col items-center justify-center gap-4">

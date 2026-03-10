@@ -2,10 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ShieldCheck, Users } from "lucide-react";
+import { ShieldCheck, Copy, CreditCard, QrCode } from "lucide-react";
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   nome: z.string().trim().min(2, "Nome muito curto").max(100),
@@ -18,7 +19,11 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-const RegistrationForm = () => {
+interface RegistrationFormProps {
+  selectedPlan: "start" | "elite";
+}
+
+const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<FormData>({
     nome: "",
@@ -29,8 +34,29 @@ const RegistrationForm = () => {
     _honey: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
-  const [submitted, setSubmitted] = useState(false);
+
+  // Payment Flow States
+  const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card" | null>(null);
+
+  // Plan Details
+  const planDetails = {
+    start: {
+      name: "Active Start",
+      price: "119,90",
+      pixCode: "00020126350014BR.GOV.BCB.PIX0113+5583940517545204000053039865406119.905802BR5901N6001C62170513ProjetoActive63047F6F",
+      qrImage: "/LogoJPEG/qrcode-pix.png"
+    },
+    elite: {
+      name: "Active Elite",
+      price: "169,90",
+      pixCode: "00020126360014BR.GOV.BCB.PIX0114+55839940517545204000053039865406169.905802BR5901N6001C62170513ProjetoActive63048820",
+      qrImage: "/LogoJPEG/qrcode-pixplanokit.png"
+    }
+  };
+
+  const currentPlan = planDetails[selectedPlan];
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -55,7 +81,7 @@ const RegistrationForm = () => {
 
     // Honeypot check (Silent rejection for bots)
     if (form._honey) {
-      setSubmitted(true);
+      setIsPaymentStep(true);
       return;
     }
 
@@ -78,56 +104,158 @@ const RegistrationForm = () => {
       const { _honey, ...submissionData } = form; // Strip honeypot before saving
       await addDoc(collection(db, "leads"), {
         ...submissionData,
+        selectedPlan, // save chosen plan
         createdAt: serverTimestamp(),
-        status: "novo",
+        status: "novo_no_checkout",
         origem: "site_quiz"
       });
 
-      // 3. Show Success & Format WhatsApp Message
-      setSubmitted(true);
-      toast.success("Inscrição prévia enviada com sucesso! 🔥");
-
-      const numeroWhatsappAtendimento = "5583994051754";
-      const mensagemWhatsApp = `Olá, vim pelo site do Projeto Active e gostaria de garantir minha vaga!\n\n*Meus dados:*\nNome: ${form.nome}\nObjetivo: ${form.objetivo}\nLesão/Restrição: ${form.lesao}`;
-      const urlWhatsApp = `https://wa.me/${numeroWhatsappAtendimento}?text=${encodeURIComponent(mensagemWhatsApp)}`;
-
-      // Abre o WhatsApp em uma nova aba
-      setTimeout(() => {
-        window.open(urlWhatsApp, '_blank');
-      }, 1500);
+      // 3. Move to Payment Step
+      setIsPaymentStep(true);
+      toast.success("Dados salvos! Quase lá...");
 
     } catch (error) {
       console.error("Erro ao salvar lead:", error);
       toast.error("Ocorreu um erro ao enviar sua inscrição. Tente novamente ou nos chame no WhatsApp.");
     } finally {
       setIsSubmitting(false);
-      setStep(1); // Reset step on completion or error
     }
   };
 
-  if (submitted) {
+  const handleCopyPix = () => {
+    navigator.clipboard.writeText(currentPlan.pixCode)
+      .then(() => toast.success("Código PIX copiado!"))
+      .catch(() => toast.error("Falha ao copiar o código"));
+  };
+
+  const handleCardCheckout = () => {
+    const numeroWhatsappAtendimento = "5583994051754";
+    const mensagemWhatsApp = `Olá Pedro, já reservei minha vaga no plano *${currentPlan.name}* e gostaria do link para pagamento via *Cartão de Crédito*.\n\nMeus dados:\nNome: ${form.nome}\nEmail: ${form.email}`;
+    const urlWhatsApp = `https://wa.me/${numeroWhatsappAtendimento}?text=${encodeURIComponent(mensagemWhatsApp)}`;
+
+    toast.info("Redirecionando para o WhatsApp do Pedro...");
+    setTimeout(() => {
+      window.open(urlWhatsApp, '_blank');
+    }, 1000);
+  };
+
+
+  if (isPaymentStep) {
     return (
       <section id="registration" className="relative py-12 sm:py-24 md:py-32 px-4 sm:px-6">
-        <div className="max-w-xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
+            className="card-glass rounded-3xl p-6 sm:p-10 border border-primary/20 shadow-[0_0_50px_rgba(255,107,0,0.1)] relative overflow-hidden"
           >
-            <div className="text-6xl mb-6">🔥</div>
-            <h2 className="text-3xl md:text-5xl font-black font-oswald uppercase mb-4">
-              Você está <span className="text-gradient">dentro!</span>
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              Sua inscrição foi recebida. Em breve entraremos em contato pelo
-              WhatsApp. Prepare-se para a transformação.
-            </p>
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-5xl font-black font-oswald uppercase mb-2">
+                Finalize seu <span className="text-gradient">Pagamento</span>
+              </h2>
+              <p className="text-muted-foreground text-sm sm:text-base">
+                Sua vaga no plano <strong className="text-white">{currentPlan.name}</strong> está reservada.<br />
+                Escolha como deseja pagar o valor de <strong className="text-primary text-xl">R$ {currentPlan.price}</strong>.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <button
+                onClick={() => setPaymentMethod("pix")}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all",
+                  paymentMethod === "pix"
+                    ? "border-primary bg-primary/10"
+                    : "border-white/10 bg-black/40 hover:border-white/30"
+                )}
+              >
+                <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
+                  <QrCode className="w-6 h-6" />
+                </div>
+                <span className="font-bold text-lg">Pagar com PIX</span>
+                <span className="text-xs text-muted-foreground text-center">Aprovação imediata</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setPaymentMethod("card");
+                  handleCardCheckout();
+                }}
+                className={cn(
+                  "flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all",
+                  paymentMethod === "card"
+                    ? "border-primary bg-primary/10"
+                    : "border-white/10 bg-black/40 hover:border-white/30"
+                )}
+              >
+                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500">
+                  <CreditCard className="w-6 h-6" />
+                </div>
+                <span className="font-bold text-lg">Cartão de Crédito</span>
+                <span className="text-xs text-muted-foreground text-center">Parcelamento em até 12x</span>
+              </button>
+            </div>
+
+            <AnimatePresence mode="wait">
+              {paymentMethod === "pix" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-black/50 border border-white/5 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center overflow-hidden"
+                >
+                  <h3 className="font-bold text-lg mb-2">Escaneie o QR Code</h3>
+                  <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+                    Abra o app do seu banco, escolha a opção PIX, escaneie o código abaixo ou copie o código Pix Copia e Cola.
+                  </p>
+
+                  <div className="bg-white p-3 rounded-xl mb-6 relative group">
+                    <img
+                      src={currentPlan.qrImage}
+                      alt="QR Code PIX"
+                      className="w-48 h-48 object-contain"
+                    />
+                    <div className="absolute inset-0 bg-primary/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    </div>
+                  </div>
+
+                  <div className="w-full max-w-md">
+                    <label className="text-xs text-muted-foreground font-bold uppercase tracking-wider mb-2 block text-left">
+                      Ou Pix Copia e Cola
+                    </label>
+                    <div className="flex bg-black border border-white/10 rounded-xl overflow-hidden focus-within:border-primary/50 transition-colors">
+                      <input
+                        type="text"
+                        readOnly
+                        value={currentPlan.pixCode}
+                        className="flex-1 bg-transparent text-sm text-foreground px-4 py-3 outline-none"
+                      />
+                      <button
+                        onClick={handleCopyPix}
+                        className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground px-4 flex items-center justify-center transition-colors border-l border-white/10"
+                        title="Copiar código PIX"
+                      >
+                        <Copy className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <p className="mt-6 text-xs text-green-400 font-medium flex items-center gap-1.5 bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20">
+                    <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                    Aguardando confirmação do pagamento...
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
           </motion.div>
         </div>
       </section>
     );
   }
 
+  // STANDARD FORM VIEW
   return (
     <section id="registration" className="relative py-12 sm:py-24 md:py-32 px-4 sm:px-6 section-gradient">
       <div className="max-w-6xl mx-auto">
@@ -173,7 +301,7 @@ const RegistrationForm = () => {
                   "Prescrição de treinos focados nos seus objetivos",
                   "Ajuste e planejamento nutricional personalizado",
                   "Acesso exclusivo à comunidade de participantes",
-                  "Concorrer a prêmios incríveis de até R$ 2.000"
+                  "Concorrer a prêmios incríveis de até R$ 2.300"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
                     <div className="mt-1 bg-green-500/20 p-1 rounded-full">
