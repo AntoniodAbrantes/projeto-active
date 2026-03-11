@@ -27,21 +27,6 @@ interface PricingSectionProps {
 
 const plans: PricingPlan[] = [
     {
-        name: "ACTIVE START",
-        price: "119.90",
-        installmentPrice: "12.91",
-        period: "à vista",
-        installmentPeriod: "12x",
-        features: [
-            "Acesso completo ao Projeto Active",
-            "Participação em todas as dinâmicas e desafios",
-            "Acesso à comunidade e conteúdos do projeto",
-        ],
-        description: "O passaporte perfeito para começar a sua transformação.",
-        buttonText: "Começar Agora",
-        isPopular: false,
-    },
-    {
         name: "ACTIVE ELITE",
         price: "169.90",
         installmentPrice: "18.29",
@@ -57,6 +42,21 @@ const plans: PricingPlan[] = [
         buttonText: "Garantir Vaga Elite",
         isPopular: true,
         hasKit: true,
+    },
+    {
+        name: "ACTIVE START",
+        price: "119.90",
+        installmentPrice: "12.91",
+        period: "à vista",
+        installmentPeriod: "12x",
+        features: [
+            "Acesso completo ao Projeto Active",
+            "Participação em todas as dinâmicas e desafios",
+            "Acesso à comunidade e conteúdos do projeto",
+        ],
+        description: "O passaporte perfeito para começar a sua transformação.",
+        buttonText: "Começar Agora",
+        isPopular: false,
     },
 ];
 
@@ -149,7 +149,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                                     x: index === 0 ? 30 : -30,
                                     scale: plan.isPopular ? 1.05 : 0.95,
                                     rotateY: index === 0 ? 8 : -8,
-                                    z: index === 0 ? -40 : 10,
+                                    z: plan.isPopular ? 10 : -40,
                                 }
                                 : { y: 0, opacity: 1, x: 0, scale: 1, rotateY: 0, z: 0 }
                         }
@@ -163,8 +163,8 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                         }}
                         className={cn(
                             `rounded-3xl border p-5 sm:p-8 text-center flex flex-col relative card-glass w-full max-w-md mx-auto lg:max-w-none lg:w-1/2`,
-                            plan.isPopular ? "border-primary/50 border-2 glow-primary-sm bg-background/90" : "border-white/10 bg-secondary/80",
-                            !isMobile && index === 0 ? "origin-right z-0" : "origin-left z-20"
+                            plan.isPopular ? "border-primary/50 border-2 glow-primary-sm bg-background/90 z-20" : "border-white/10 bg-secondary/80 z-0",
+                            !isMobile && index === 0 ? "origin-right" : "origin-left"
                         )}
                     >
                         {plan.isPopular && (

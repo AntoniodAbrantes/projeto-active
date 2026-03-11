@@ -139,6 +139,13 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     }, 1000);
   };
 
+  const handlePixSelection = () => {
+    setPaymentMethod("pix");
+    setTimeout(() => {
+      document.querySelector("#pix-details")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 200); // Wait for the enter animation to complete before scrolling
+  };
+
 
   if (isPaymentStep) {
     return (
@@ -162,7 +169,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
               <button
-                onClick={() => setPaymentMethod("pix")}
+                onClick={handlePixSelection}
                 className={cn(
                   "flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all",
                   paymentMethod === "pix"
@@ -200,6 +207,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
             <AnimatePresence mode="wait">
               {paymentMethod === "pix" && (
                 <motion.div
+                  id="pix-details"
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
