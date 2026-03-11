@@ -519,18 +519,22 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                         animate={{ opacity: 1, height: "auto" }}
                         className="overflow-hidden"
                       >
-                        <label className="block text-sm font-bold mb-2 text-white/90">Tamanho da Camisa (Inclusa no Plano)</label>
-                        <select
-                          value={form.tamanho_camisa || "M"}
-                          onChange={(e) => handleChange("tamanho_camisa", e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-medium appearance-none"
-                        >
-                          <option value="P">P</option>
-                          <option value="M">M</option>
-                          <option value="G">G</option>
-                          <option value="GG">GG</option>
-                          <option value="XG">XG</option>
-                        </select>
+                        <label className="block text-sm font-bold mb-3 text-white/90">Tamanho da Camisa (Inclusa no Plano)</label>
+                        <div className="flex gap-2">
+                          {["P", "M", "G", "GG", "XG"].map((size) => (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={() => handleChange("tamanho_camisa", size)}
+                              className={`flex-1 py-3 rounded-xl border transition-all font-bold text-base ${form.tamanho_camisa === size
+                                  ? "bg-primary border-primary text-primary-foreground shadow-[0_0_15px_rgba(255,107,0,0.4)] relative z-10"
+                                  : "bg-black/40 border-white/10 text-white/70 hover:border-primary/50 hover:bg-black/60"
+                                }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
                       </motion.div>
                     )}
 
