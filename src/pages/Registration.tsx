@@ -22,7 +22,7 @@ const Registration = () => {
             {/* Checkout Navbar Simples e Focada */}
             <header className="w-full py-4 px-6 border-b border-white/5 bg-black/60 backdrop-blur-xl flex justify-center sticky top-0 z-50">
                 <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-                    <img src="/LogoJPEG/NovaLogoLetrasBrancasPNG.png" alt="Projeto Active" className="h-8 md:h-10 object-contain" />
+                    <img src="/LogoJPEG/logo-transparent.png" alt="Projeto Active" className="h-8 md:h-10 object-contain" />
                 </Link>
             </header>
 
@@ -39,10 +39,6 @@ const Registration = () => {
                     <span className="flex items-center gap-1 group">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 opacity-60 group-hover:opacity-100 transition-opacity"></span>
                         Ambiente 100% Seguro
-                    </span>
-                    <span className="flex items-center gap-1 group">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 opacity-60 group-hover:opacity-100 transition-opacity"></span>
-                        Pagamento Criptografado
                     </span>
                 </div>
                 <p>© {new Date().getFullYear()} Projeto Active. Todos os direitos reservados.</p>

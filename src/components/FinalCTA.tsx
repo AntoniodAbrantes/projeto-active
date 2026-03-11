@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import { ShieldCheck, Dumbbell, Zap, Gift, Smartphone } from "lucide-react";
 
 const FinalCTA = () => {
@@ -33,15 +32,15 @@ const FinalCTA = () => {
                     className="flex flex-col items-center"
                 >
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mt-4 px-4 sm:px-0">
-                        <Link
-                            to="/inscricao"
+                        <button
+                            onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
                             className="w-full sm:w-auto relative py-5 sm:py-6 px-8 sm:px-12 rounded-xl text-lg sm:text-xl font-black uppercase text-center overflow-hidden group bg-primary text-primary-foreground hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-xl shadow-primary/30 flex items-center justify-center gap-3"
                         >
                             <span className="relative z-10 w-full flex items-center justify-center">
                                 Garantir Minha Vaga Agora
                             </span>
                             <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out skew-x-12" />
-                        </Link>
+                        </button>
                     </div>
 
                     <div className="mt-8 flex flex-col md:flex-row gap-4 items-center justify-center text-sm text-muted-foreground">

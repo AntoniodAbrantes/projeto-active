@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useNavigate } from "react-router-dom";
 
 const TOTAL_FRAMES = 120;
 const FRAME_PATH = "/sequence1/ezgif-frame-";
@@ -21,7 +20,6 @@ const HeroSection = () => {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(-1);
   const rafRef = useRef<number>();
-  const navigate = useNavigate();
 
   // Use a plain MotionValue for scroll progress (manually driven from window scroll)
   const rawProgress = useMotionValue(0);
@@ -168,7 +166,7 @@ const HeroSection = () => {
   }, [imagesLoaded, hasFrames, smoothProgress, drawFrame]);
 
   const scrollToRegistration = () => {
-    navigate("/inscricao");
+    document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (

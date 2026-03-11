@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
 
 const StickyMobileCTA = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -29,10 +28,8 @@ const StickyMobileCTA = () => {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const navigate = useNavigate();
-
     const scrollToRegistration = () => {
-        navigate("/inscricao");
+        document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" });
     };
 
     return (
