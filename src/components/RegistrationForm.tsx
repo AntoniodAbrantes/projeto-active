@@ -49,12 +49,14 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     start: {
       name: "Active Start",
       price: "119,90",
+      priceNumeric: 119.90,
       pixCode: "00020126350014BR.GOV.BCB.PIX0113+5583940517545204000053039865406119.905802BR5901N6001C62170513ProjetoActive63047F6F",
       qrImage: "/LogoJPEG/qrcode-pix.png"
     },
     elite: {
       name: "Active Elite",
       price: "169,90",
+      priceNumeric: 169.90,
       pixCode: "00020126360014BR.GOV.BCB.PIX0114+55839940517545204000053039865406169.905802BR5901N6001C62170513ProjetoActive63048820",
       qrImage: "/LogoJPEG/qrcode-pixplanokit.png"
     }
@@ -109,6 +111,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
       await addDoc(collection(db, "leads"), {
         ...submissionData,
         selectedPlan, // save chosen plan
+        amount: currentPlan.priceNumeric, // save numeric plan value
         createdAt: serverTimestamp(),
         status: "novo_no_checkout",
         origem: "site_quiz"
@@ -527,8 +530,8 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                               type="button"
                               onClick={() => handleChange("tamanho_camisa", size)}
                               className={`flex-1 py-3 rounded-xl border transition-all font-bold text-base ${form.tamanho_camisa === size
-                                  ? "bg-primary border-primary text-primary-foreground shadow-[0_0_15px_rgba(255,107,0,0.4)] relative z-10"
-                                  : "bg-black/40 border-white/10 text-white/70 hover:border-primary/50 hover:bg-black/60"
+                                ? "bg-primary border-primary text-primary-foreground shadow-[0_0_15px_rgba(255,107,0,0.4)] relative z-10"
+                                : "bg-black/40 border-white/10 text-white/70 hover:border-primary/50 hover:bg-black/60"
                                 }`}
                             >
                               {size}
