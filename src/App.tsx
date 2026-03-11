@@ -9,6 +9,7 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
+import Registration from "./pages/Registration";
 import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/inscricao" element={<Registration />} />
               <Route path="/login" element={<Login />} />
               <Route path="/admin" element={
                 <ProtectedRoute>

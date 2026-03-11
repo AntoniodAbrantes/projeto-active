@@ -2,7 +2,7 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Activity } from "lucide-react";
 
 interface StudentRowProps {
     student: Student;
@@ -83,8 +83,13 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
                 <div className="flex flex-col gap-1">
                     <p className="font-medium text-white group-hover:text-primary transition-colors text-base">{student.nome || student.name || 'Sem nome'}</p>
 
-                    {(student.objetivo || student.lesao) && (
+                    {(student.objetivo || student.lesao || student.weight) && (
                         <div className="flex flex-col gap-1 text-xs mt-1">
+                            {student.weight && (
+                                <span className="flex items-center gap-1 text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20 w-fit">
+                                    <Activity className="w-3 h-3 text-emerald-400" /> {student.weight} kg
+                                </span>
+                            )}
                             {student.objetivo && (
                                 <span className="flex items-center gap-1 text-muted-foreground bg-primary/10 px-2 py-0.5 rounded border border-primary/20 w-fit">
                                     <Crosshair className="w-3 h-3 text-primary" /> {student.objetivo}

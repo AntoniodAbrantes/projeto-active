@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 const TOTAL_FRAMES = 120;
 const FRAME_PATH = "/sequence1/ezgif-frame-";
@@ -20,6 +21,7 @@ const HeroSection = () => {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(-1);
   const rafRef = useRef<number>();
+  const navigate = useNavigate();
 
   // Use a plain MotionValue for scroll progress (manually driven from window scroll)
   const rawProgress = useMotionValue(0);
@@ -166,11 +168,11 @@ const HeroSection = () => {
   }, [imagesLoaded, hasFrames, smoothProgress, drawFrame]);
 
   const scrollToRegistration = () => {
-    document.querySelector("#registration")?.scrollIntoView({ behavior: "smooth" });
+    navigate("/inscricao");
   };
 
   return (
-    <section id="hero" ref={containerRef} className={`relative ${hasFrames ? "h-[400vh]" : "h-screen"}`}>
+    <section id="hero" ref={containerRef} className={`relative ${hasFrames ? "h-[400vh]" : "h-screen"} `}>
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         {/* Canvas for frame sequence (desktop only) */}
         {hasFrames && (
@@ -204,7 +206,7 @@ const HeroSection = () => {
               <motion.div
                 className="h-full bg-primary rounded-full"
                 initial={{ width: 0 }}
-                animate={{ width: `${loadProgress}%` }}
+                animate={{ width: `${loadProgress}% ` }}
                 transition={{ duration: 0.3 }}
               />
             </div>
@@ -219,13 +221,13 @@ const HeroSection = () => {
           className="absolute inset-0"
           style={{
             opacity: hasFrames ? overlayOpacity : 1,
-            background: `linear-gradient(
-              to bottom,
-              hsl(0 0% 2% / 0.5) 0%,
-              hsl(0 0% 2% / 0.3) 20%,
-              hsl(0 0% 2% / 0.4) 50%,
-              hsl(0 0% 2% / 0.8) 80%,
-              hsl(0 0% 2%) 100%
+            background: `linear - gradient(
+  to bottom,
+  hsl(0 0 % 2 % / 0.5) 0 %,
+  hsl(0 0 % 2 % / 0.3) 20 %,
+  hsl(0 0 % 2 % / 0.4) 50 %,
+  hsl(0 0 % 2 % / 0.8) 80 %,
+  hsl(0 0 % 2 %) 100 %
             )`,
           }}
         />

@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
-interface PricingPlan {
+export interface PricingPlan {
     name: string;
     price: string;
     installmentPrice: string;
@@ -21,9 +22,6 @@ interface PricingPlan {
     hasKit?: boolean;
 }
 
-interface PricingSectionProps {
-    onSelectPlan: (plan: "start" | "elite") => void;
-}
 
 const plans: PricingPlan[] = [
     {
@@ -60,10 +58,11 @@ const plans: PricingPlan[] = [
     },
 ];
 
-const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
+const PricingSection = () => {
     const [isInstallment, setIsInstallment] = useState(false);
     const isMobile = useIsMobile();
     const switchRef = useRef<HTMLButtonElement>(null);
+    const navigate = useNavigate();
 
     const handleToggle = (checked: boolean) => {
         setIsInstallment(checked);
@@ -92,6 +91,11 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
                 shapes: ["circle"],
             });
         }
+    };
+
+    const handleSelectPlan = (index: number) => {
+        const planPath = index === 0 ? "elite" : "start"; // Since Elite is index 0
+        navigate(`/inscricao?plano=${planPath}`);
     };
 
     const scrollToForm = () => {
@@ -239,10 +243,7 @@ const PricingSection = ({ onSelectPlan }: PricingSectionProps) => {
 
                             <div className="w-full mt-auto pt-6 sm:pt-8 relative z-10">
                                 <button
-                                    onClick={() => {
-                                        onSelectPlan(index === 0 ? "start" : "elite");
-                                        scrollToForm();
-                                    }}
+                                    onClick={() => handleSelectPlan(index)}
                                     className={cn(
                                         "w-full py-3.5 sm:py-5 rounded-xl uppercase tracking-wider font-bold text-xs sm:text-sm transition-all duration-300 border",
                                         plan.isPopular

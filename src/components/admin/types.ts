@@ -11,5 +11,6 @@ export interface Student {
     instagram?: string;
     objetivo?: string;
     lesao?: string;
+    weight?: string;
     status?: string;
 }

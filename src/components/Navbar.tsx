@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const navLinks = [
   { label: "Início", href: "#hero" },
@@ -12,6 +13,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -54,7 +56,7 @@ const Navbar = () => {
             </button>
           ))}
           <button
-            onClick={() => scrollTo("#registration")}
+            onClick={() => navigate("/inscricao")}
             className="bg-primary text-primary-foreground px-5 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity glow-primary-sm"
           >
             Inscreva-se
@@ -90,7 +92,7 @@ const Navbar = () => {
                 </button>
               ))}
               <button
-                onClick={() => scrollTo("#registration")}
+                onClick={() => navigate("/inscricao")}
                 className="bg-primary text-primary-foreground px-5 py-3 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity mt-2 glow-primary-sm"
               >
                 Inscreva-se

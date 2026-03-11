@@ -2,7 +2,7 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface StudentCardProps {
@@ -103,8 +103,14 @@ export function StudentCard({ student, onEdit }: StudentCardProps) {
                 </div>
 
                 {/* Additional Info (Goals, Restrictions) */}
-                {(student.objetivo || student.lesao) && (
+                {(student.objetivo || student.lesao || student.weight) && (
                     <div className="flex flex-col gap-2 mt-1">
+                        {student.weight && (
+                            <div className="flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/5 p-2 rounded-lg border border-emerald-500/10">
+                                <Activity className="w-4 h-4 text-emerald-400 shrink-0" />
+                                <span className="truncate" title={`${student.weight} kg`}><strong>Peso:</strong> {student.weight} kg</span>
+                            </div>
+                        )}
                         {student.objetivo && (
                             <div className="flex items-center gap-2 text-white/70 text-sm bg-primary/5 p-2 rounded-lg border border-primary/10">
                                 <Crosshair className="w-4 h-4 text-primary shrink-0" />

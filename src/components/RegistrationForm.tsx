@@ -14,6 +14,7 @@ const formSchema = z.object({
   email: z.string().trim().email("Email inválido").max(255),
   objetivo: z.string().optional(),
   lesao: z.string().optional(),
+  weight: z.string().optional(),
   _honey: z.string().optional(), // Honeypot prevent bot submissions
 });
 
@@ -31,6 +32,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     email: "",
     objetivo: "",
     lesao: "",
+    weight: "70",
     _honey: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -63,7 +65,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 3));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 4));
   const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const handleSelectGoal = (goal: string) => {
@@ -347,7 +349,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
             <div className="absolute top-0 inset-x-0 h-1.5 bg-secondary">
               <div
                 className="h-full bg-red-500 relative transition-all duration-500 ease-out"
-                style={{ width: `${(step / 3) * 100}%` }}
+                style={{ width: `${(step / 4) * 100}%` }}
               >
                 <div className="absolute inset-0 bg-white/20 animate-pulse" />
               </div>
@@ -355,9 +357,10 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
 
             <div className="text-center mb-6 pt-2">
               <h3 className="text-xl font-bold font-oswald uppercase mb-2">
-                {step === 1 && "Passo 1 de 3"}
-                {step === 2 && "Passo 2 de 3"}
-                {step === 3 && "Último Passo"}
+                {step === 1 && "Passo 1 de 4"}
+                {step === 2 && "Passo 2 de 4"}
+                {step === 3 && "Passo 3 de 4"}
+                {step === 4 && "Último Passo"}
               </h3>
               <p className="text-sm text-red-400 font-semibold flex items-center justify-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
@@ -398,6 +401,54 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -50 }}
+                    className="space-y-6"
+                  >
+                    <div className="text-center">
+                      <label className="block text-lg font-bold mb-2 text-white">Qual é o seu peso atual?</label>
+                      <p className="text-primary font-bold text-3xl font-oswald tracking-wide mt-2">
+                        {form.weight} kg
+                      </p>
+                    </div>
+
+                    <div className="px-4 pb-4 pt-2">
+                      <input
+                        type="range"
+                        min="40"
+                        max="150"
+                        step="1"
+                        value={form.weight}
+                        onChange={(e) => handleChange("weight", e.target.value)}
+                        className="w-full accent-primary h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground mt-2 font-medium">
+                        <span>40 kg</span>
+                        <span>150 kg</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="w-full py-4 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25"
+                    >
+                      Continuar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      className="w-full mt-4 text-sm text-muted-foreground hover:text-white transition-colors"
+                    >
+                      ← Voltar
+                    </button>
+                  </motion.div>
+                )}
+
+                {step === 3 && (
+                  <motion.div
+                    key="step2"
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -50 }}
                     className="space-y-4"
                   >
                     <label className="block text-lg font-bold mb-4 text-center text-white">Possui alguma lesão ou restrição médica?</label>
@@ -425,7 +476,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                   </motion.div>
                 )}
 
-                {step === 3 && (
+                {step === 4 && (
                   <motion.div
                     key="step3"
                     initial={{ opacity: 0, x: 50 }}
