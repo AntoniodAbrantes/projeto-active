@@ -2,7 +2,7 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Activity } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Activity, Shirt } from "lucide-react";
 
 interface StudentRowProps {
     student: Student;
@@ -83,7 +83,7 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
                 <div className="flex flex-col gap-1">
                     <p className="font-medium text-white group-hover:text-primary transition-colors text-base">{student.nome || student.name || 'Sem nome'}</p>
 
-                    {(student.objetivo || student.lesao || student.weight) && (
+                    {(student.objetivo || student.lesao || student.weight || student.tamanho_camisa) && (
                         <div className="flex flex-col gap-1 text-xs mt-1">
                             {student.weight && (
                                 <span className="flex items-center gap-1 text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20 w-fit">
@@ -98,6 +98,11 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
                             {student.lesao && student.lesao !== "Nenhuma" && student.lesao !== "Sem lesões" && (
                                 <span className="flex items-center gap-1 text-red-400 bg-red-400/10 px-2 py-0.5 rounded border border-red-400/20 w-fit">
                                     <HeartPulse className="w-3 h-3 text-red-400" /> {student.lesao}
+                                </span>
+                            )}
+                            {student.tamanho_camisa && (
+                                <span className="flex items-center gap-1 text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded border border-purple-400/20 w-fit">
+                                    <Shirt className="w-3 h-3 text-purple-400" /> Camisa: {student.tamanho_camisa}
                                 </span>
                             )}
                         </div>

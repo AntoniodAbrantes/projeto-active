@@ -2,7 +2,7 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar, Activity } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar, Activity, Shirt } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface StudentCardProps {
@@ -103,7 +103,7 @@ export function StudentCard({ student, onEdit }: StudentCardProps) {
                 </div>
 
                 {/* Additional Info (Goals, Restrictions) */}
-                {(student.objetivo || student.lesao || student.weight) && (
+                {(student.objetivo || student.lesao || student.weight || student.tamanho_camisa) && (
                     <div className="flex flex-col gap-2 mt-1">
                         {student.weight && (
                             <div className="flex items-center gap-2 text-emerald-400 text-sm bg-emerald-500/5 p-2 rounded-lg border border-emerald-500/10">
@@ -121,6 +121,12 @@ export function StudentCard({ student, onEdit }: StudentCardProps) {
                             <div className="flex items-center gap-2 text-white/70 text-sm bg-red-500/5 p-2 rounded-lg border border-red-500/10">
                                 <HeartPulse className="w-4 h-4 text-red-400 shrink-0" />
                                 <span className="truncate" title={student.lesao}><strong>Atenção:</strong> {student.lesao}</span>
+                            </div>
+                        )}
+                        {student.tamanho_camisa && (
+                            <div className="flex items-center gap-2 text-purple-400 text-sm bg-purple-500/5 p-2 rounded-lg border border-purple-500/10">
+                                <Shirt className="w-4 h-4 text-purple-400 shrink-0" />
+                                <span className="truncate" title={student.tamanho_camisa}><strong>Camisa:</strong> {student.tamanho_camisa}</span>
                             </div>
                         )}
                     </div>

@@ -15,6 +15,7 @@ const formSchema = z.object({
   objetivo: z.string().optional(),
   lesao: z.string().optional(),
   weight: z.string().optional(),
+  tamanho_camisa: z.string().optional(),
   _honey: z.string().optional(), // Honeypot prevent bot submissions
 });
 
@@ -33,6 +34,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     objetivo: "",
     lesao: "",
     weight: "70",
+    tamanho_camisa: "M",
     _honey: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
@@ -511,6 +513,27 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                       </div>
                     ))}
 
+                    {selectedPlan === "elite" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="overflow-hidden"
+                      >
+                        <label className="block text-sm font-bold mb-2 text-white/90">Tamanho da Camisa (Inclusa no Plano)</label>
+                        <select
+                          value={form.tamanho_camisa || "M"}
+                          onChange={(e) => handleChange("tamanho_camisa", e.target.value)}
+                          className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all font-medium appearance-none"
+                        >
+                          <option value="P">P</option>
+                          <option value="M">M</option>
+                          <option value="G">G</option>
+                          <option value="GG">GG</option>
+                          <option value="XG">XG</option>
+                        </select>
+                      </motion.div>
+                    )}
+
                     <button
                       type="button"
                       onClick={prevStep}
@@ -525,7 +548,7 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
 
             <div className="pt-2">
               <AnimatePresence>
-                {step === 3 && (
+                {step === 4 && (
                   <motion.button
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}

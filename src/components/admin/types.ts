@@ -13,4 +13,5 @@ export interface Student {
     lesao?: string;
     weight?: string;
     status?: string;
+    tamanho_camisa?: string;
 }
