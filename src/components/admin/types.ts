@@ -1,3 +1,22 @@
+export interface Meal {
+    id: string;
+    name: string;
+    time: string;
+    foods: string[];
+}
+
+export interface Diet {
+    studentId: string;
+    studentName: string;
+    weight: number;
+    calories: number;
+    meals: Meal[];
+    notes: string;
+    published: boolean;
+    createdAt?: any;
+    updatedAt?: any;
+}
+
 export interface Student {
     id: string;
     nome?: string;
@@ -15,4 +34,5 @@ export interface Student {
     status?: string;
     tamanho_camisa?: string;
     selectedPlan?: string;
+    diet?: Diet;
 }

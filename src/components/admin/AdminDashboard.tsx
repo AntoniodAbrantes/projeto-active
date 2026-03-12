@@ -6,6 +6,7 @@ import { Student } from "./types";
 import { StatsCards } from "./StatsCards";
 import { StudentsTable } from "./StudentsTable";
 import { EditStudentModal } from "./EditStudentModal";
+import { DietModal } from "./DietModal";
 import { motion } from "framer-motion";
 import { Loader2, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -14,6 +15,7 @@ export default function AdminDashboard() {
     const [students, setStudents] = useState<Student[]>([]);
     const [loading, setLoading] = useState(true);
     const [editingStudent, setEditingStudent] = useState<Student | null>(null);
+    const [dietStudent, setDietStudent] = useState<Student | null>(null);
     const { logout } = useAuth();
 
     useEffect(() => {
@@ -88,7 +90,7 @@ export default function AdminDashboard() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
                 >
-                    <StudentsTable students={students} onEdit={setEditingStudent} />
+                    <StudentsTable students={students} onEdit={setEditingStudent} onDiet={setDietStudent} />
                 </motion.div>
             )}
 
@@ -97,6 +99,13 @@ export default function AdminDashboard() {
                     student={editingStudent}
                     isOpen={!!editingStudent}
                     onClose={() => setEditingStudent(null)}
+                />
+            )}
+            {dietStudent && (
+                <DietModal
+                    student={dietStudent}
+                    isOpen={!!dietStudent}
+                    onClose={() => setDietStudent(null)}
                 />
             )}
         </div>

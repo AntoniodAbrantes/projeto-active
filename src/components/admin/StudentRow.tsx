@@ -2,14 +2,15 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Activity, Shirt } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Activity, Shirt, Salad } from "lucide-react";
 
 interface StudentRowProps {
     student: Student;
     onEdit: (student: Student) => void;
+    onDiet: (student: Student) => void;
 }
 
-export function StudentRow({ student, onEdit }: StudentRowProps) {
+export function StudentRow({ student, onEdit, onDiet }: StudentRowProps) {
     const handleTogglePayment = async () => {
         try {
             const studentRef = doc(db, "leads", student.id);
@@ -129,6 +130,13 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
             </td>
             <td className="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="flex items-center justify-end gap-2">
+                    <button
+                        onClick={() => onDiet(student)}
+                        className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                        title="Dieta"
+                    >
+                        <Salad className="w-4 h-4" />
+                    </button>
                     <button
                         onClick={() => onEdit(student)}
                         className="p-2 text-muted-foreground hover:text-white hover:bg-white/10 rounded-lg transition-colors"

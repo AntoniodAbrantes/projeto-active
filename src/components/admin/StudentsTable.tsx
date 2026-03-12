@@ -4,7 +4,7 @@ import { Search, Filter } from "lucide-react";
 import { StudentRow } from "./StudentRow";
 import { StudentCard } from "./StudentCard";
 
-export function StudentsTable({ students, onEdit }: { students: Student[], onEdit: (student: Student) => void }) {
+export function StudentsTable({ students, onEdit, onDiet }: { students: Student[], onEdit: (student: Student) => void, onDiet: (student: Student) => void }) {
     const [searchTerm, setSearchTerm] = useState("");
     const [filter, setFilter] = useState<"all" | "paid" | "pending">("all");
 
@@ -75,7 +75,7 @@ export function StudentsTable({ students, onEdit }: { students: Student[], onEdi
                     <tbody className="divide-y divide-white/5">
                         {filteredStudents.length > 0 ? (
                             filteredStudents.map((student) => (
-                                <StudentRow key={student.id} student={student} onEdit={() => onEdit(student)} />
+                                <StudentRow key={student.id} student={student} onEdit={() => onEdit(student)} onDiet={() => onDiet(student)} />
                             ))
                         ) : (
                             <tr>
@@ -92,7 +92,7 @@ export function StudentsTable({ students, onEdit }: { students: Student[], onEdi
             <div className="md:hidden flex flex-col gap-4 p-4">
                 {filteredStudents.length > 0 ? (
                     filteredStudents.map((student) => (
-                        <StudentCard key={student.id} student={student} onEdit={() => onEdit(student)} />
+                        <StudentCard key={student.id} student={student} onEdit={() => onEdit(student)} onDiet={() => onDiet(student)} />
                     ))
                 ) : (
                     <div className="py-12 text-center text-muted-foreground bg-black/20 rounded-xl border border-white/5">

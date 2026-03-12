@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import Registration from "./pages/Registration";
 import Login from "./pages/Login";
+import DietPage from "./pages/DietPage";
 import { useAdminPWA } from "./hooks/useAdminPWA";
 
 const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ const AppInner = () => {
       <Route path="/" element={<Index />} />
       <Route path="/inscricao" element={<Registration />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/dieta/:studentId" element={<DietPage />} />
       <Route path="/admin" element={
         <ProtectedRoute>
           <Admin />

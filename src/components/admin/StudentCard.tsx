@@ -2,15 +2,16 @@ import { Student } from "./types";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
-import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar, Activity, Shirt } from "lucide-react";
+import { Mail, Phone, Edit, Trash2, Crosshair, HeartPulse, Calendar, Activity, Shirt, Salad } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface StudentCardProps {
     student: Student;
     onEdit: (student: Student) => void;
+    onDiet: (student: Student) => void;
 }
 
-export function StudentCard({ student, onEdit }: StudentCardProps) {
+export function StudentCard({ student, onEdit, onDiet }: StudentCardProps) {
     const handleTogglePayment = async () => {
         try {
             const studentRef = doc(db, "leads", student.id);
@@ -141,6 +142,13 @@ export function StudentCard({ student, onEdit }: StudentCardProps) {
                 </div>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => onDiet(student)}
+                        className="p-3 text-muted-foreground hover:text-primary hover:bg-primary/10 active:bg-primary/20 rounded-xl transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
+                        title="Dieta"
+                    >
+                        <Salad className="w-5 h-5" />
+                    </button>
                     <button
                         onClick={() => onEdit(student)}
                         className="p-3 text-muted-foreground hover:text-white hover:bg-white/10 active:bg-white/20 rounded-xl transition-colors flex items-center justify-center min-w-[44px] min-h-[44px]"
