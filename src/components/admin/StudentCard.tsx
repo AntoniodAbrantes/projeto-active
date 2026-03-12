@@ -123,7 +123,7 @@ export function StudentCard({ student, onEdit }: StudentCardProps) {
                                 <span className="truncate" title={student.lesao}><strong>Atenção:</strong> {student.lesao}</span>
                             </div>
                         )}
-                        {student.tamanho_camisa && (
+                        {student.tamanho_camisa && student.selectedPlan !== 'start' && (
                             <div className="flex items-center gap-2 text-purple-400 text-sm bg-purple-500/5 p-2 rounded-lg border border-purple-500/10">
                                 <Shirt className="w-4 h-4 text-purple-400 shrink-0" />
                                 <span className="truncate" title={student.tamanho_camisa}><strong>Camisa:</strong> {student.tamanho_camisa}</span>

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { z } from "zod";
-import { ShieldCheck, Copy, CreditCard, QrCode } from "lucide-react";
+import { ShieldCheck, Copy, CreditCard, QrCode, CheckCircle, Clock, ArrowRight } from "lucide-react";
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -43,6 +43,20 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
   const [isPaymentStep, setIsPaymentStep] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<"pix" | "card" | null>(null);
+  const [timeLeft, setTimeLeft] = useState(300); // 5 minutes timer
+
+  useEffect(() => {
+    if (paymentMethod === "pix" && timeLeft > 0) {
+      const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timerId);
+    }
+  }, [paymentMethod, timeLeft]);
+
+  const formatTime = (timeInSeconds: number) => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   // Plan Details
   const planDetails = {
@@ -50,19 +64,35 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
       name: "Active Start",
       price: "119,90",
       priceNumeric: 119.90,
-      pixCode: "00020126350014BR.GOV.BCB.PIX0113+5583940517545204000053039865406119.905802BR5901N6001C62170513ProjetoActive63047F6F",
+      pixCode: "00020126580014BR.GOV.BCB.PIX0136ce6fe151-1f43-4610-a14f-af86ddd9bbf05204000053039865406119.905802BR5901N6001C62170513ProjetoActive6304B747",
       qrImage: "/LogoJPEG/qrcode-pix.png"
     },
     elite: {
       name: "Active Elite",
       price: "169,90",
       priceNumeric: 169.90,
-      pixCode: "00020126360014BR.GOV.BCB.PIX0114+55839940517545204000053039865406169.905802BR5901N6001C62170513ProjetoActive63048820",
+      pixCode: "00020126580014BR.GOV.BCB.PIX0136ce6fe151-1f43-4610-a14f-af86ddd9bbf05204000053039865406169.905802BR5901N6001C62170513ProjetoActive6304DDCB",
       qrImage: "/LogoJPEG/qrcode-pixplanokit.png"
     }
   };
 
   const currentPlan = planDetails[selectedPlan];
+
+  // Load saved registration from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(`active_registration_${selectedPlan}`);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.isPaymentStep) {
+          setForm(parsed.form);
+          setIsPaymentStep(true);
+        }
+      } catch (e) {
+        console.error("Failed to parse local storage", e);
+      }
+    }
+  }, [selectedPlan]);
 
   const handleChange = (field: keyof FormData, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -108,14 +138,26 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
     try {
       // 2. Save to Firebase Firestore
       const { _honey, ...submissionData } = form; // Strip honeypot before saving
+      
+      const dataToSave = { ...submissionData };
+      if (selectedPlan !== "elite") {
+        delete dataToSave.tamanho_camisa;
+      }
+
       await addDoc(collection(db, "leads"), {
-        ...submissionData,
+        ...dataToSave,
         selectedPlan, // save chosen plan
         amount: currentPlan.priceNumeric, // save numeric plan value
         createdAt: serverTimestamp(),
         status: "novo_no_checkout",
         origem: "site_quiz"
       });
+
+      // Save state to avoid duplicate registrations on refresh
+      localStorage.setItem(`active_registration_${selectedPlan}`, JSON.stringify({
+        isPaymentStep: true,
+        form: dataToSave
+      }));
 
       // 3. Move to Payment Step
       setIsPaymentStep(true);
@@ -165,74 +207,96 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
             className="card-glass rounded-3xl p-6 sm:p-10 border border-primary/20 shadow-[0_0_50px_rgba(255,107,0,0.1)] relative overflow-hidden"
           >
             <div className="text-center mb-8">
-              <h2 className="text-3xl md:text-5xl font-black font-oswald uppercase mb-2">
-                Finalize seu <span className="text-gradient">Pagamento</span>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
+                className="mx-auto w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mb-6"
+              >
+                <CheckCircle className="w-10 h-10" />
+              </motion.div>
+              <h2 className="text-3xl md:text-5xl font-black font-oswald uppercase mb-4">
+                Inscrição <span className="text-green-500">Confirmada!</span>
               </h2>
-              <p className="text-muted-foreground text-sm sm:text-base">
-                Sua vaga no plano <strong className="text-white">{currentPlan.name}</strong> está reservada.<br />
-                Escolha como deseja pagar o valor de <strong className="text-primary text-xl">R$ {currentPlan.price}</strong>.
+              <p className="text-muted-foreground text-base sm:text-lg mb-2">
+                Parabéns! Seus dados foram recebidos e sua vaga no plano <strong className="text-white">{currentPlan.name}</strong> está garantida.
               </p>
-            </div>
+              
+              {!paymentMethod && (
+                <div className="mt-8 p-6 bg-black/40 border border-white/10 rounded-2xl">
+                  <p className="text-lg font-bold mb-4">
+                    Para finalizar, escolha como deseja pagar o valor de <strong className="text-primary">R$ {currentPlan.price}</strong>:
+                  </p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button
+                      onClick={handlePixSelection}
+                      className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-white/10 bg-black/40 hover:border-primary/50 transition-all group"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
+                        <QrCode className="w-6 h-6" />
+                      </div>
+                      <span className="font-bold text-lg">Pagar com PIX</span>
+                      <span className="text-xs text-muted-foreground text-center">Aprovação imediata</span>
+                    </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-              <button
-                onClick={handlePixSelection}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all",
-                  paymentMethod === "pix"
-                    ? "border-primary bg-primary/10"
-                    : "border-white/10 bg-black/40 hover:border-white/30"
-                )}
-              >
-                <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
-                  <QrCode className="w-6 h-6" />
+                    <button
+                      onClick={() => setPaymentMethod("card")}
+                      className="flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-white/10 bg-black/40 hover:border-primary/50 transition-all group"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
+                        <CreditCard className="w-6 h-6" />
+                      </div>
+                      <span className="font-bold text-lg">Cartão de Crédito</span>
+                      <span className="text-xs text-muted-foreground text-center">Parcelamento em até 12x</span>
+                    </button>
+                  </div>
+                  
+                  <div className="mt-8 text-center pt-6 border-t border-white/10">
+                    <button
+                      onClick={() => {
+                        setIsPaymentStep(false);
+                        localStorage.removeItem(`active_registration_${selectedPlan}`);
+                      }}
+                      className="text-sm text-muted-foreground hover:text-white transition-colors flex items-center justify-center gap-2 mx-auto"
+                    >
+                      Precisa corrigir seus dados? Voltar
+                    </button>
+                  </div>
                 </div>
-                <span className="font-bold text-lg">Pagar com PIX</span>
-                <span className="text-xs text-muted-foreground text-center">Aprovação imediata</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  setPaymentMethod("card");
-                  handleCardCheckout();
-                }}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 transition-all",
-                  paymentMethod === "card"
-                    ? "border-primary bg-primary/10"
-                    : "border-white/10 bg-black/40 hover:border-white/30"
-                )}
-              >
-                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500">
-                  <CreditCard className="w-6 h-6" />
-                </div>
-                <span className="font-bold text-lg">Cartão de Crédito</span>
-                <span className="text-xs text-muted-foreground text-center">Parcelamento em até 12x</span>
-              </button>
+              )}
             </div>
 
             <AnimatePresence mode="wait">
               {paymentMethod === "pix" && (
                 <motion.div
+                  key="pix-details"
                   id="pix-details"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
+                  initial={{ opacity: 0, height: 0, y: 20 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="bg-black/50 border border-white/5 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center overflow-hidden"
+                  className="bg-black/50 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center overflow-hidden"
                 >
-                  <h3 className="font-bold text-lg mb-2">Escaneie o QR Code</h3>
+                  <div className="flex items-center gap-2 mb-4 bg-red-500/10 text-red-500 px-4 py-2 rounded-full border border-red-500/20">
+                    <Clock className="w-5 h-5 animate-pulse" />
+                    <span className="font-bold text-lg tracking-wider font-oswald text-white">
+                      {formatTime(timeLeft)}
+                    </span>
+                  </div>
+                  
+                  <h3 className="font-bold text-xl mb-2">Finalize seu pagamento via PIX</h3>
                   <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-                    Abra o app do seu banco, escolha a opção PIX, escaneie o código abaixo ou copie o código Pix Copia e Cola.
+                    {timeLeft > 0 
+                      ? "Escaneie o QR Code ou copie a chave abaixo dentro do tempo limite para garantir o valor promocional."
+                      : "Tempo limite esgotado. Caso ainda queira pagar, copie o código abaixo ou atualize a página."}
                   </p>
 
-                  <div className="bg-white p-3 rounded-xl mb-6 relative group">
+                  <div className={cn("bg-white p-3 rounded-xl mb-6 relative group transition-opacity duration-500", timeLeft === 0 && "opacity-50 grayscale")}>
                     <img
                       src={currentPlan.qrImage}
                       alt="QR Code PIX"
                       className="w-48 h-48 object-contain"
                     />
-                    <div className="absolute inset-0 bg-primary/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    </div>
                   </div>
 
                   <div className="w-full max-w-md">
@@ -256,10 +320,50 @@ const RegistrationForm = ({ selectedPlan }: RegistrationFormProps) => {
                     </div>
                   </div>
 
-                  <p className="mt-6 text-xs text-green-400 font-medium flex items-center gap-1.5 bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20">
+                  <p className="mt-8 text-xs text-green-400 font-medium flex items-center gap-1.5 bg-green-500/10 px-4 py-2 rounded-full border border-green-500/20">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                     Aguardando confirmação do pagamento...
                   </p>
+
+                  <button
+                    onClick={() => setPaymentMethod(null)}
+                    className="mt-6 text-sm text-muted-foreground hover:text-white transition-colors underline"
+                  >
+                    Mudar forma de pagamento
+                  </button>
+                </motion.div>
+              )}
+
+              {paymentMethod === "card" && (
+                <motion.div
+                  key="card-details"
+                  initial={{ opacity: 0, height: 0, y: 20 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-black/50 border border-white/10 rounded-2xl p-6 sm:p-8 flex flex-col items-center text-center overflow-hidden"
+                >
+                  <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 mb-6">
+                    <CreditCard className="w-8 h-8" />
+                  </div>
+                  
+                  <h3 className="font-bold text-2xl font-oswald uppercase mb-4">Pagamento via Cartão</h3>
+                  <p className="text-base text-muted-foreground mb-8 max-w-md">
+                    Sua inscrição já está garantida no sistema! Para pagar via Cartão de Crédito e finalizar o processo, clique no botão abaixo para conversar com nossa equipe pelo WhatsApp.
+                  </p>
+
+                  <button
+                    onClick={handleCardCheckout}
+                    className="w-full sm:w-auto bg-green-500 text-white font-bold py-4 px-8 rounded-xl text-lg hover:bg-green-600 transition-colors flex items-center justify-center gap-2 shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
+                  >
+                    Ir para o WhatsApp <ArrowRight className="w-5 h-5" />
+                  </button>
+
+                  <button
+                    onClick={() => setPaymentMethod(null)}
+                    className="mt-8 text-sm text-muted-foreground hover:text-white transition-colors underline"
+                  >
+                    Mudar forma de pagamento
+                  </button>
                 </motion.div>
               )}
             </AnimatePresence>

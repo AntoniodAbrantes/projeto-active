@@ -34,17 +34,28 @@ export function StudentsTable({ students, onEdit }: { students: Student[], onEdi
                     />
                 </div>
 
-                <div className="relative w-full md:w-48">
-                    <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                    <select
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value as any)}
-                        className="w-full bg-black/40 border border-white/10 rounded-lg pl-10 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 text-white appearance-none cursor-pointer"
+                <div className="flex bg-black/40 border border-white/10 rounded-lg p-1 w-full md:w-auto overflow-x-auto font-medium no-scrollbar">
+                    <button
+                        onClick={() => setFilter("all")}
+                        className={`flex-1 md:flex-none px-4 py-1.5 text-sm rounded-md transition-colors whitespace-nowrap ${filter === "all" ? "bg-white/10 text-white shadow-sm" : "text-muted-foreground hover:text-white/80"
+                            }`}
                     >
-                        <option value="all">Todos os Status</option>
-                        <option value="paid">✅ Pagos</option>
-                        <option value="pending">⏳ Pendentes</option>
-                    </select>
+                        Todos
+                    </button>
+                    <button
+                        onClick={() => setFilter("paid")}
+                        className={`flex-1 md:flex-none px-4 py-1.5 text-sm rounded-md transition-colors whitespace-nowrap ${filter === "paid" ? "bg-green-500/20 text-green-400 shadow-sm" : "text-muted-foreground hover:text-white/80"
+                            }`}
+                    >
+                        ✅ Pagos
+                    </button>
+                    <button
+                        onClick={() => setFilter("pending")}
+                        className={`flex-1 md:flex-none px-4 py-1.5 text-sm rounded-md transition-colors whitespace-nowrap ${filter === "pending" ? "bg-red-500/20 text-red-400 shadow-sm" : "text-muted-foreground hover:text-white/80"
+                            }`}
+                    >
+                        ⏳ Pendentes
+                    </button>
                 </div>
             </div>
 

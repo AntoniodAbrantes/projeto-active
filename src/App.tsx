@@ -11,8 +11,27 @@ import NotFound from "./pages/NotFound";
 import Admin from "./pages/Admin";
 import Registration from "./pages/Registration";
 import Login from "./pages/Login";
+import { useAdminPWA } from "./hooks/useAdminPWA";
 
 const queryClient = new QueryClient();
+
+// Inner component so we have access to useLocation (needs to be inside BrowserRouter)
+const AppInner = () => {
+  useAdminPWA();
+  return (
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/inscricao" element={<Registration />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/admin" element={
+        <ProtectedRoute>
+          <Admin />
+        </ProtectedRoute>
+      } />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -22,17 +41,7 @@ const App = () => (
       <AuthProvider>
         <SmoothScrollProvider>
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/inscricao" element={<Registration />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/admin" element={
-                <ProtectedRoute>
-                  <Admin />
-                </ProtectedRoute>
-              } />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppInner />
           </BrowserRouter>
         </SmoothScrollProvider>
       </AuthProvider>

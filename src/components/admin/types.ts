@@ -14,4 +14,5 @@ export interface Student {
     weight?: string;
     status?: string;
     tamanho_camisa?: string;
+    selectedPlan?: string;
 }

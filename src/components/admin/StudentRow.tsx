@@ -100,7 +100,7 @@ export function StudentRow({ student, onEdit }: StudentRowProps) {
                                     <HeartPulse className="w-3 h-3 text-red-400" /> {student.lesao}
                                 </span>
                             )}
-                            {student.tamanho_camisa && (
+                            {student.tamanho_camisa && student.selectedPlan !== 'start' && (
                                 <span className="flex items-center gap-1 text-purple-400 bg-purple-400/10 px-2 py-0.5 rounded border border-purple-400/20 w-fit">
                                     <Shirt className="w-3 h-3 text-purple-400" /> Camisa: {student.tamanho_camisa}
                                 </span>
